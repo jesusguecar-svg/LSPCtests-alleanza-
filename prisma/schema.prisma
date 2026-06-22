@@ -28,6 +28,22 @@ model User {
 
   submissions   Submission[] @relation("UserSubmissions")
   reviewedItems Submission[] @relation("ReviewedBy")
+  notifications Notification[]
+}
+
+// Notificaciones in-app (aprobaciones, rechazos, nuevos envíos por revisar).
+model Notification {
+  id        String   @id @default(cuid())
+  type      String // APPROVED | REJECTED | SUBMITTED
+  title     String
+  body      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
 }
 
 // Catálogo de los 7 pasos del onboarding (sembrado en seed.ts)

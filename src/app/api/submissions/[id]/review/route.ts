@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { notify } from "@/lib/notifications";
 
 // El manager aprueba o rechaza una submission (con feedback).
 export async function POST(
@@ -28,6 +29,7 @@ export async function POST(
 
   const submission = await prisma.submission.findUnique({
     where: { id: params.id },
+    include: { step: true },
   });
   if (!submission) {
     return NextResponse.json(
@@ -54,6 +56,22 @@ export async function POST(
       },
     },
   });
+
+  if (action === "approve") {
+    await notify({
+      userId: submission.userId,
+      type: "APPROVED",
+      title: `Paso aprobado: ${submission.step.title}`,
+      body: "¡Buen trabajo! Ya puedes continuar con el siguiente paso.",
+    });
+  } else {
+    await notify({
+      userId: submission.userId,
+      type: "REJECTED",
+      title: `Paso rechazado: ${submission.step.title}`,
+      body: feedback,
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }

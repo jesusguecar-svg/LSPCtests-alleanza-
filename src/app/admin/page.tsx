@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LogoutButton } from "../logout-button";
+import { NotificationBell } from "../notification-bell";
 import { STATUS_META, waitingTime, formatDate } from "@/lib/format";
 import type { SubmissionStatus } from "@/lib/constants";
 import { ReviewActions } from "./review-actions";
@@ -63,7 +64,10 @@ export default async function AdminPage() {
             Revisa envíos y gestiona el onboarding del equipo
           </p>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <LogoutButton />
+        </div>
       </header>
 
       <section className="mb-8 grid grid-cols-3 gap-4">

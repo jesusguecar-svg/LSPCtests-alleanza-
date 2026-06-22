@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { saveUpload } from "@/lib/uploads";
+import { notifyManagers } from "@/lib/notifications";
 
 // El técnico envía un paso (con archivo opcional + nota). Pasa a IN_REVIEW.
 export async function POST(req: Request) {
@@ -89,6 +90,12 @@ export async function POST(req: Request) {
         },
       },
     },
+  });
+
+  await notifyManagers({
+    type: "SUBMITTED",
+    title: `Nuevo envío por revisar: ${step.title}`,
+    body: `${session.name} envió el paso "${step.title}".`,
   });
 
   return NextResponse.json({ ok: true });

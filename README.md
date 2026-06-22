@@ -13,6 +13,8 @@ aprueba/rechaza cada envío desde un único panel.
 - **Autenticación** propia con sesión por cookie (JWT, `jose`) y `bcryptjs`
 - **Subida de archivos** privada al sistema de archivos (MVP); lista para migrar
   a Cloudinary / S3
+- **Notificaciones in-app** (campana 🔔) con conteo de no leídas: el técnico es
+  avisado al aprobar/rechazar un paso; el manager, cuando hay algo por revisar
 
 ## Los 7 pasos del onboarding
 
@@ -92,7 +94,7 @@ almacenamiento cifrado, acuerdos BAA con los proveedores y controles adicionales
 
 ## Roadmap (Fase 2+)
 
-- Notificaciones por correo (Resend/SendGrid) al aprobar/rechazar
+- Notificaciones por correo (Resend/SendGrid), además de las in-app actuales
 - Toggle bilingüe ES/EN
 - Acciones en lote para activar cuentas
 - Features para el director del programa, reportes y analítica

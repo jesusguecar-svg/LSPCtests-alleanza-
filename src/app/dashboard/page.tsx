@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LogoutButton } from "../logout-button";
+import { NotificationBell } from "../notification-bell";
 import { StepCard } from "./step-card";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +29,10 @@ export default async function DashboardPage() {
           <h1 className="text-xl font-bold">Hola, {session.name.split(" ")[0]}</h1>
           <p className="text-sm text-slate-500">Tu progreso de onboarding</p>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <LogoutButton />
+        </div>
       </header>
 
       <section className="card mb-6 p-5">
