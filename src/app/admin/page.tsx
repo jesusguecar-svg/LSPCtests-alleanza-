@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LogoutButton } from "../logout-button";
@@ -167,7 +168,7 @@ export default async function AdminPage() {
                     {approved}/{steps.length} aprobados
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {steps.map((step) => {
                     const sub = subByStep.get(step.id);
                     const meta =
@@ -184,6 +185,12 @@ export default async function AdminPage() {
                       </span>
                     );
                   })}
+                  <Link
+                    href={`/admin/${tech.id}`}
+                    className="ml-auto text-sm font-medium text-brand-600 hover:underline"
+                  >
+                    Ver historial →
+                  </Link>
                 </div>
               </div>
             );
