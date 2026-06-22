@@ -66,9 +66,13 @@ export default async function ReportsPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
       <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">{d.reports.title}</h1>
-          <p className="text-sm text-slate-500">{d.reports.subtitle}</p>
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/alleanza-mark.svg" alt="Alleanza" className="h-9 w-auto" />
+          <div>
+            <h1 className="text-xl font-bold">{d.reports.title}</h1>
+            <p className="text-sm text-slate-500">{d.reports.subtitle}</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/admin" className="btn-secondary text-sm">

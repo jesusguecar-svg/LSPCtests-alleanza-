@@ -4,9 +4,10 @@ import { getLocale } from "@/lib/i18n-server";
 import { I18nProvider } from "./i18n-provider";
 
 export const metadata: Metadata = {
-  title: "Onboarding — Técnicos / Technicians",
+  title: "Alleanza Insurance — Onboarding",
   description:
     "Onboarding de técnicos para el programa de telemedicina y pruebas diagnósticas.",
+  icons: { icon: "/alleanza-mark.svg" },
 };
 
 export default function RootLayout({

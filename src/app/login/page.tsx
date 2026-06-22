@@ -20,6 +20,12 @@ export default async function LoginPage() {
           <LanguageToggle />
         </div>
         <div className="mb-6 text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/alleanza-logo.svg"
+            alt="Alleanza Insurance"
+            className="mx-auto mb-4 h-24 w-auto"
+          />
           <h1 className="text-2xl font-bold text-slate-900">
             {d.common.appName}
           </h1>

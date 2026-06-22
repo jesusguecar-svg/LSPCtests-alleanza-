@@ -31,11 +31,15 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
       <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">
-            {d.dashboard.greeting(session.name.split(" ")[0])}
-          </h1>
-          <p className="text-sm text-slate-500">{d.dashboard.subtitle}</p>
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/alleanza-mark.svg" alt="Alleanza" className="h-9 w-auto" />
+          <div>
+            <h1 className="text-xl font-bold">
+              {d.dashboard.greeting(session.name.split(" ")[0])}
+            </h1>
+            <p className="text-sm text-slate-500">{d.dashboard.subtitle}</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <LanguageToggle />

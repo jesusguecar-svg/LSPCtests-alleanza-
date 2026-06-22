@@ -5,12 +5,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Paleta de marca Alleanza (cian)
         brand: {
-          50: "#eef6ff",
-          100: "#d9eaff",
-          500: "#2563eb",
-          600: "#1d4ed8",
-          700: "#1e40af",
+          50: "#e8f7fe",
+          100: "#c7ecfd",
+          500: "#14b4ee",
+          600: "#0c93cf",
+          700: "#0a78ab",
         },
       },
     },

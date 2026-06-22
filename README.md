@@ -91,6 +91,14 @@ Disponible para Manager y Director:
   cuellos de botella, y rechazos por paso.
 - **Exportar CSV** con el estado de cada técnico por paso.
 
+## Marca / Logo
+
+El logo de Alleanza está en `public/alleanza-logo.svg` (completo, para login y
+registro) y `public/alleanza-mark.svg` (solo el símbolo, para las cabeceras). Son
+versiones SVG vectoriales; para usar el archivo original, reemplaza esos ficheros
+(manteniendo el nombre) o coloca un PNG y ajusta las rutas en los componentes. La
+paleta de la app (`brand` en `tailwind.config.ts`) usa el cian de Alleanza.
+
 ## Estructura
 
 ```
