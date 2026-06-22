@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" role="img" aria-label="Alleanza Insurance — Health &amp; Life Insurance">
+  <g transform="translate(94,12) scale(1.6)" fill="#14b4ee">
+    <path d="M6,98 Q33,94 39,54 L39,98 Z" />
+    <path d="M60,6 L54,26 L58,31 L45,98 L75,98 Z" />
+    <path d="M114,98 Q87,94 81,54 L81,98 Z" />
+  </g>
+  <text x="190" y="228" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="31" letter-spacing="0.5" fill="#14b4ee">ALLEANZA INSURANCE</text>
+  <text x="190" y="266" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="22" fill="#14b4ee">Health &amp; Life Insurance</text>
+</svg>
