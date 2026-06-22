@@ -64,12 +64,32 @@ npm run dev                 # http://localhost:3000
 
 ### Cuentas de demostración
 
-| Rol     | Correo              | Contraseña  |
-| ------- | ------------------- | ----------- |
-| Manager | manager@lspc.test   | manager123  |
-| Técnico | tecnico@lspc.test   | tecnico123  |
+| Rol      | Correo               | Contraseña   |
+| -------- | -------------------- | ------------ |
+| Manager  | manager@lspc.test    | manager123   |
+| Director | director@lspc.test   | director123  |
+| Técnico  | tecnico@lspc.test    | tecnico123   |
 
 Los técnicos nuevos también pueden registrarse en `/register`.
+
+## Roles
+
+- **Técnico:** ve y completa su propio onboarding (`/dashboard`).
+- **Manager:** revisa/aprueba envíos, activa cuentas en lote y ve reportes
+  (`/admin`, `/admin/reports`).
+- **Director del programa:** acceso de **solo lectura** al panel y a los
+  reportes/analítica (sin acciones de revisión ni activación). Pensado para
+  supervisión del programa.
+
+## Reportes y analítica (`/admin/reports`)
+
+Disponible para Manager y Director:
+
+- KPIs: total de técnicos, completos, en progreso, sin iniciar, pendientes de
+  revisión y tiempo medio de revisión.
+- Embudo por paso (aprobado / en revisión / rechazado / pendiente) para detectar
+  cuellos de botella, y rechazos por paso.
+- **Exportar CSV** con el estado de cada técnico por paso.
 
 ## Estructura
 
@@ -115,7 +135,8 @@ Los documentos (ID, foto, HIPAA, contrato) se guardan en `uploads/` (fuera de
 `/api/files/...`. Esto es un punto de partida; un despliegue HIPAA real requiere
 almacenamiento cifrado, acuerdos BAA con los proveedores y controles adicionales.
 
-## Roadmap (Fase 2+)
+## Roadmap (Fase 3+)
 
-- Acciones en lote para activar cuentas
-- Features para el director del programa, reportes y analítica
+- Almacenamiento de archivos en Cloudinary / S3 (requisito para producción)
+- Recordatorios automáticos para pasos estancados
+- Panel del director con tendencias en el tiempo y filtros por fecha

@@ -3,12 +3,13 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getLocale } from "@/lib/i18n-server";
 import { getDict } from "@/lib/i18n";
+import { landingPath } from "@/lib/constants";
 import { AuthForm } from "../auth-form";
 import { LanguageToggle } from "../language-toggle";
 
 export default async function LoginPage() {
   const session = await getSession();
-  if (session) redirect(session.role === "MANAGER" ? "/admin" : "/dashboard");
+  if (session) redirect(landingPath(session.role));
 
   const d = getDict(getLocale());
 

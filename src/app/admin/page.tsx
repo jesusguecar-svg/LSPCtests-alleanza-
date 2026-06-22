@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getLocale } from "@/lib/i18n-server";
 import { getDict, localizeStep } from "@/lib/i18n";
 import { statusMeta, waitingTime, formatDate } from "@/lib/format";
-import type { SubmissionStatus } from "@/lib/constants";
+import { canReview, canViewAdmin, type SubmissionStatus } from "@/lib/constants";
 import { LogoutButton } from "../logout-button";
 import { NotificationBell } from "../notification-bell";
 import { LanguageToggle } from "../language-toggle";
@@ -17,10 +17,11 @@ export const dynamic = "force-dynamic";
 export default async function AdminPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.role !== "MANAGER") redirect("/dashboard");
+  if (!canViewAdmin(session.role)) redirect("/dashboard");
 
   const locale = getLocale();
   const d = getDict(locale);
+  const reviewer = canReview(session.role);
 
   const steps = await prisma.step.findMany({ orderBy: { order: "asc" } });
   const stepOrder = new Map(steps.map((s) => [s.id, s.order]));
@@ -86,6 +87,9 @@ export default async function AdminPage() {
           <p className="text-sm text-slate-500">{d.admin.subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/admin/reports" className="btn-secondary text-sm">
+            {d.admin.reports}
+          </Link>
           <LanguageToggle />
           <NotificationBell />
           <LogoutButton />
@@ -155,7 +159,7 @@ export default async function AdminPage() {
                       </a>
                     )}
                   </div>
-                  <ReviewActions submissionId={submission.id} />
+                  {reviewer && <ReviewActions submissionId={submission.id} />}
                 </div>
               );
             })}
@@ -163,11 +167,13 @@ export default async function AdminPage() {
         )}
       </section>
 
-      {/* Activación en lote */}
-      <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold">{d.admin.bulkTitle}</h2>
-        <BulkActivation items={activationReady} />
-      </section>
+      {/* Activación en lote (solo manager) */}
+      {reviewer && (
+        <section className="mb-10">
+          <h2 className="mb-3 text-lg font-semibold">{d.admin.bulkTitle}</h2>
+          <BulkActivation items={activationReady} />
+        </section>
+      )}
 
       {/* Resumen del equipo */}
       <section>

@@ -125,6 +125,7 @@ async function main() {
 
   const managerPassword = await bcrypt.hash("manager123", 10);
   const techPassword = await bcrypt.hash("tecnico123", 10);
+  const directorPassword = await bcrypt.hash("director123", 10);
 
   const manager = await prisma.user.upsert({
     where: { email: "manager@lspc.test" },
@@ -134,6 +135,17 @@ async function main() {
       name: "Manager Demo",
       passwordHash: managerPassword,
       role: "MANAGER",
+    },
+  });
+
+  const director = await prisma.user.upsert({
+    where: { email: "director@lspc.test" },
+    update: {},
+    create: {
+      email: "director@lspc.test",
+      name: "Director Demo",
+      passwordHash: directorPassword,
+      role: "DIRECTOR",
     },
   });
 
@@ -159,8 +171,9 @@ async function main() {
   }
 
   console.log("\nListo. Cuentas de demostración:");
-  console.log(`  Manager  -> ${manager.email} / manager123`);
-  console.log(`  Técnico  -> ${tech.email} / tecnico123`);
+  console.log(`  Manager   -> ${manager.email} / manager123`);
+  console.log(`  Director  -> ${director.email} / director123`);
+  console.log(`  Técnico   -> ${tech.email} / tecnico123`);
 }
 
 main()

@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getLocale } from "@/lib/i18n-server";
 import { getDict, localizeStep } from "@/lib/i18n";
 import { statusMeta, waitingTime, formatDate } from "@/lib/format";
-import type { SubmissionStatus } from "@/lib/constants";
+import { canReview, canViewAdmin, type SubmissionStatus } from "@/lib/constants";
 import { ReviewActions } from "../review-actions";
 
 export const dynamic = "force-dynamic";
@@ -17,10 +17,11 @@ export default async function TechnicianDetailPage({
 }) {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.role !== "MANAGER") redirect("/dashboard");
+  if (!canViewAdmin(session.role)) redirect("/dashboard");
 
   const locale = getLocale();
   const d = getDict(locale);
+  const reviewer = canReview(session.role);
 
   const tech = await prisma.user.findUnique({
     where: { id: params.id },
@@ -146,7 +147,9 @@ export default async function TechnicianDetailPage({
                 </ol>
               )}
 
-              {actionable && <ReviewActions submissionId={sub.id} />}
+              {reviewer && actionable && (
+                <ReviewActions submissionId={sub.id} />
+              )}
             </section>
           );
         })}

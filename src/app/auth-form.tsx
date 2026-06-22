@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "./i18n-provider";
+import { landingPath, type Role } from "@/lib/constants";
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
@@ -33,7 +34,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       return;
     }
 
-    router.replace(data.role === "MANAGER" ? "/admin" : "/dashboard");
+    router.replace(landingPath(data.role as Role));
     router.refresh();
   }
 

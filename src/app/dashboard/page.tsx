@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale } from "@/lib/i18n-server";
 import { getDict } from "@/lib/i18n";
+import { landingPath } from "@/lib/constants";
 import { LogoutButton } from "../logout-button";
 import { NotificationBell } from "../notification-bell";
 import { LanguageToggle } from "../language-toggle";
@@ -13,7 +14,7 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.role === "MANAGER") redirect("/admin");
+  if (session.role !== "TECHNICIAN") redirect(landingPath(session.role));
 
   const d = getDict(getLocale());
 

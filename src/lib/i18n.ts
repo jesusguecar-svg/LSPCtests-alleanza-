@@ -45,7 +45,7 @@ const es = {
     haveAccount: "¿Ya tienes cuenta?",
     signInHere: "Inicia sesión",
     demoNote:
-      "Cuentas demo — Manager: manager@lspc.test / manager123 · Técnico: tecnico@lspc.test / tecnico123",
+      "Cuentas demo — Manager: manager@lspc.test / manager123 · Director: director@lspc.test / director123 · Técnico: tecnico@lspc.test / tecnico123",
     genericError: "Ocurrió un error. Inténtalo de nuevo.",
   },
   dashboard: {
@@ -122,6 +122,25 @@ const es = {
     empty: "No tienes notificaciones.",
     ariaLabel: "Notificaciones",
   },
+  reports: {
+    title: "Reportes y analítica",
+    subtitle: "Resumen del programa de onboarding",
+    backToAdmin: "← Ir al panel",
+    completed: "Completos",
+    inProgress: "En progreso",
+    notStarted: "Sin iniciar",
+    pendingReview: "Pendientes de revisión",
+    avgReview: "Tiempo medio de revisión",
+    funnelTitle: "Progreso por paso",
+    rejectionsTitle: "Rechazos por paso",
+    noData: "Aún no hay datos para mostrar.",
+    exportCsv: "Exportar CSV",
+    hoursUnit: "h",
+    daysUnit: "d",
+    none: "—",
+    rejections: (n: number) =>
+      `${n} ${n === 1 ? "rechazo" : "rechazos"}`,
+  },
   time: {
     justNow: "ahora",
     lessThanMinute: "hace menos de un minuto",
@@ -176,7 +195,7 @@ const en: Dict = {
     haveAccount: "Already have an account?",
     signInHere: "Sign in",
     demoNote:
-      "Demo accounts — Manager: manager@lspc.test / manager123 · Technician: tecnico@lspc.test / tecnico123",
+      "Demo accounts — Manager: manager@lspc.test / manager123 · Director: director@lspc.test / director123 · Technician: tecnico@lspc.test / tecnico123",
     genericError: "Something went wrong. Please try again.",
   },
   dashboard: {
@@ -250,6 +269,24 @@ const en: Dict = {
     title: "Notifications",
     empty: "You have no notifications.",
     ariaLabel: "Notifications",
+  },
+  reports: {
+    title: "Reports & analytics",
+    subtitle: "Onboarding program overview",
+    backToAdmin: "← Go to dashboard",
+    completed: "Completed",
+    inProgress: "In progress",
+    notStarted: "Not started",
+    pendingReview: "Pending review",
+    avgReview: "Average review time",
+    funnelTitle: "Progress by step",
+    rejectionsTitle: "Rejections by step",
+    noData: "No data to display yet.",
+    exportCsv: "Export CSV",
+    hoursUnit: "h",
+    daysUnit: "d",
+    none: "—",
+    rejections: (n: number) => `${n} ${n === 1 ? "rejection" : "rejections"}`,
   },
   time: {
     justNow: "just now",
