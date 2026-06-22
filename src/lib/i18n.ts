@@ -98,6 +98,16 @@ const es = {
       "Motivo del rechazo e instrucciones para corregir...",
     rejectNeedsReason: "Escribe el motivo del rechazo.",
     actionError: "No se pudo procesar.",
+    bulkTitle: "Activación de cuentas en lote",
+    bulkHint:
+      "Técnicos con todos los pasos aprobados, listos para activar su cuenta. Selecciónalos y actívalos de una vez.",
+    bulkNone: "No hay técnicos listos para activar en este momento.",
+    selectAll: "Seleccionar todos",
+    activateSelected: (n: number) => `Activar seleccionados (${n})`,
+    activating: "Activando...",
+    bulkResult: (n: number) =>
+      `${n} ${n === 1 ? "cuenta activada" : "cuentas activadas"}.`,
+    reports: "Ver reportes →",
   },
   detail: {
     back: "← Volver al panel",
@@ -217,6 +227,16 @@ const en: Dict = {
     rejectPlaceholder: "Rejection reason and instructions to fix...",
     rejectNeedsReason: "Write the rejection reason.",
     actionError: "Could not process.",
+    bulkTitle: "Bulk account activation",
+    bulkHint:
+      "Technicians with all steps approved, ready to activate their account. Select them and activate at once.",
+    bulkNone: "No technicians ready to activate right now.",
+    selectAll: "Select all",
+    activateSelected: (n: number) => `Activate selected (${n})`,
+    activating: "Activating...",
+    bulkResult: (n: number) =>
+      `${n} ${n === 1 ? "account activated" : "accounts activated"}.`,
+    reports: "View reports →",
   },
   detail: {
     back: "← Back to dashboard",

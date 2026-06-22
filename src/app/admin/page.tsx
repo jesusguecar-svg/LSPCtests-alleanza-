@@ -10,6 +10,7 @@ import { LogoutButton } from "../logout-button";
 import { NotificationBell } from "../notification-bell";
 import { LanguageToggle } from "../language-toggle";
 import { ReviewActions } from "./review-actions";
+import { BulkActivation, type ActivationItem } from "./bulk-activation";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,10 @@ export default async function AdminPage() {
     submission: (typeof technicians)[number]["submissions"][number];
   }[] = [];
 
+  // Técnicos listos para activar la cuenta (paso "activation" desbloqueado y
+  // aún sin aprobar) — alimenta la activación en lote.
+  const activationReady: ActivationItem[] = [];
+
   for (const tech of technicians) {
     const byOrder = [...tech.submissions].sort(
       (a, b) => (stepOrder.get(a.stepId) ?? 0) - (stepOrder.get(b.stepId) ?? 0)
@@ -51,6 +56,17 @@ export default async function AdminPage() {
         sub.step.managerOnly && unlocked && sub.status !== "APPROVED";
       if (sub.status === "IN_REVIEW" || isManagerActionable) {
         queue.push({ tech, submission: sub });
+      }
+      if (
+        sub.step.key === "activation" &&
+        unlocked &&
+        sub.status !== "APPROVED"
+      ) {
+        activationReady.push({
+          submissionId: sub.id,
+          techName: tech.name,
+          techEmail: tech.email,
+        });
       }
     }
   }
@@ -145,6 +161,12 @@ export default async function AdminPage() {
             })}
           </div>
         )}
+      </section>
+
+      {/* Activación en lote */}
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold">{d.admin.bulkTitle}</h2>
+        <BulkActivation items={activationReady} />
       </section>
 
       {/* Resumen del equipo */}

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { notify } from "@/lib/notifications";
+import { reviewSubmission } from "@/lib/review";
 
 // El manager aprueba o rechaza una submission (con feedback).
 export async function POST(
@@ -14,69 +13,18 @@ export async function POST(
   }
 
   const body = await req.json().catch(() => null);
-  const action = body?.action?.toString(); // "approve" | "reject"
-  const feedback = body?.feedback?.toString().trim() || null;
+  const action = body?.action?.toString();
+  const feedback = body?.feedback?.toString() ?? null;
 
-  if (action !== "approve" && action !== "reject") {
-    return NextResponse.json({ error: "Acción inválida." }, { status: 400 });
-  }
-  if (action === "reject" && !feedback) {
-    return NextResponse.json(
-      { error: "Indica el motivo del rechazo en el feedback." },
-      { status: 400 }
-    );
-  }
-
-  const submission = await prisma.submission.findUnique({
-    where: { id: params.id },
-    include: { step: true },
-  });
-  if (!submission) {
-    return NextResponse.json(
-      { error: "Envío no encontrado." },
-      { status: 404 }
-    );
-  }
-
-  const newStatus = action === "approve" ? "APPROVED" : "REJECTED";
-
-  await prisma.submission.update({
-    where: { id: submission.id },
-    data: {
-      status: newStatus,
-      feedback,
-      reviewedAt: new Date(),
-      reviewedById: session.userId,
-      events: {
-        create: {
-          action: action === "approve" ? "APPROVED" : "REJECTED",
-          message: feedback,
-          actorName: session.name,
-        },
-      },
-    },
+  const result = await reviewSubmission({
+    submissionId: params.id,
+    action,
+    feedback,
+    manager: { id: session.userId, name: session.name },
   });
 
-  const dashboardUrl = `${process.env.APP_URL || ""}/dashboard`;
-  if (action === "approve") {
-    await notify({
-      userId: submission.userId,
-      type: "APPROVED",
-      title: `Paso aprobado: ${submission.step.title}`,
-      body: "¡Buen trabajo! Ya puedes continuar con el siguiente paso.",
-      ctaLabel: "Ver mi progreso",
-      ctaUrl: dashboardUrl,
-    });
-  } else {
-    await notify({
-      userId: submission.userId,
-      type: "REJECTED",
-      title: `Paso rechazado: ${submission.step.title}`,
-      body: feedback,
-      ctaLabel: "Corregir y reenviar",
-      ctaUrl: dashboardUrl,
-    });
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
   }
-
   return NextResponse.json({ ok: true });
 }
