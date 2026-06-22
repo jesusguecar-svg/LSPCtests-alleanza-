@@ -96,6 +96,8 @@ export async function POST(req: Request) {
     type: "SUBMITTED",
     title: `Nuevo envío por revisar: ${step.title}`,
     body: `${session.name} envió el paso "${step.title}".`,
+    ctaLabel: "Ir a la cola de revisión",
+    ctaUrl: `${process.env.APP_URL || ""}/admin`,
   });
 
   return NextResponse.json({ ok: true });

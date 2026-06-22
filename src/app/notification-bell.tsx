@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "./i18n-provider";
+import type { Dictionary } from "@/lib/i18n";
 
 type Notification = {
   id: string;
@@ -18,19 +20,20 @@ const ICON: Record<Notification["type"], string> = {
   SUBMITTED: "📥",
 };
 
-function timeAgo(iso: string): string {
+function timeAgo(iso: string, t: Dictionary["time"]): string {
   const diff = Date.now() - new Date(iso).getTime();
   const min = Math.floor(diff / 60000);
-  if (min < 1) return "ahora";
-  if (min < 60) return `hace ${min} min`;
+  if (min < 1) return t.justNow;
+  if (min < 60) return t.minShort(min);
   const h = Math.floor(min / 60);
-  if (h < 24) return `hace ${h} h`;
-  const d = Math.floor(h / 24);
-  return `hace ${d} d`;
+  if (h < 24) return t.hShort(h);
+  const days = Math.floor(h / 24);
+  return t.dShort(days);
 }
 
 export function NotificationBell() {
   const router = useRouter();
+  const { d } = useI18n();
   const [items, setItems] = useState<Notification[]>([]);
   const [unread, setUnread] = useState(0);
   const [open, setOpen] = useState(false);
@@ -89,7 +92,7 @@ export function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={toggle}
-        aria-label="Notificaciones"
+        aria-label={d.notif.ariaLabel}
         className="btn-secondary relative px-3"
       >
         <span aria-hidden>🔔</span>
@@ -103,12 +106,12 @@ export function NotificationBell() {
       {open && (
         <div className="absolute right-0 z-20 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
           <div className="border-b border-slate-100 px-4 py-2 text-sm font-semibold">
-            Notificaciones
+            {d.notif.title}
           </div>
           <div className="max-h-96 overflow-y-auto">
             {items.length === 0 ? (
               <p className="px-4 py-6 text-center text-sm text-slate-500">
-                No tienes notificaciones.
+                {d.notif.empty}
               </p>
             ) : (
               items.map((n) => (
@@ -125,7 +128,7 @@ export function NotificationBell() {
                       <p className="mt-0.5 text-sm text-slate-600">{n.body}</p>
                     )}
                     <p className="mt-0.5 text-xs text-slate-400">
-                      {timeAgo(n.createdAt)}
+                      {timeAgo(n.createdAt, d.time)}
                     </p>
                   </div>
                 </div>

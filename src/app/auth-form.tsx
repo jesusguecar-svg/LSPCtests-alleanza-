@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "./i18n-provider";
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
+  const { d } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +28,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      setError(data.error ?? "Ocurrió un error. Inténtalo de nuevo.");
+      setError(data.error ?? d.auth.genericError);
       setLoading(false);
       return;
     }
@@ -41,20 +43,20 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         <>
           <div>
             <label className="mb-1 block text-sm font-medium">
-              Nombre completo
+              {d.auth.name}
             </label>
             <input name="name" required className="input" autoComplete="name" />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">
-              Teléfono (opcional)
+              {d.auth.phone}
             </label>
             <input name="phone" className="input" autoComplete="tel" />
           </div>
         </>
       )}
       <div>
-        <label className="mb-1 block text-sm font-medium">Correo</label>
+        <label className="mb-1 block text-sm font-medium">{d.auth.email}</label>
         <input
           name="email"
           type="email"
@@ -64,7 +66,9 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Contraseña</label>
+        <label className="mb-1 block text-sm font-medium">
+          {d.auth.password}
+        </label>
         <input
           name="password"
           type="password"
@@ -83,10 +87,10 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
 
       <button type="submit" disabled={loading} className="btn-primary w-full">
         {loading
-          ? "Procesando..."
+          ? d.common.loading
           : mode === "login"
-            ? "Entrar"
-            : "Crear cuenta"}
+            ? d.auth.signIn
+            : d.auth.createAccount}
       </button>
     </form>
   );

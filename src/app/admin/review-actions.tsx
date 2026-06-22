@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "../i18n-provider";
 
 export function ReviewActions({ submissionId }: { submissionId: string }) {
   const router = useRouter();
+  const { d } = useI18n();
   const [loading, setLoading] = useState<"approve" | "reject" | null>(null);
   const [showReject, setShowReject] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -13,7 +15,7 @@ export function ReviewActions({ submissionId }: { submissionId: string }) {
   async function review(action: "approve" | "reject") {
     if (action === "reject" && !feedback.trim()) {
       setShowReject(true);
-      setError("Escribe el motivo del rechazo.");
+      setError(d.admin.rejectNeedsReason);
       return;
     }
     setLoading(action);
@@ -26,7 +28,7 @@ export function ReviewActions({ submissionId }: { submissionId: string }) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(data.error ?? "No se pudo procesar.");
+      setError(data.error ?? d.admin.actionError);
       setLoading(null);
       return;
     }
@@ -43,7 +45,7 @@ export function ReviewActions({ submissionId }: { submissionId: string }) {
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
           rows={2}
-          placeholder="Motivo del rechazo e instrucciones para corregir..."
+          placeholder={d.admin.rejectPlaceholder}
           className="input mb-2"
         />
       )}
@@ -58,7 +60,7 @@ export function ReviewActions({ submissionId }: { submissionId: string }) {
           disabled={loading !== null}
           className="btn-success"
         >
-          {loading === "approve" ? "..." : "Aprobar"}
+          {loading === "approve" ? "..." : d.admin.approve}
         </button>
         {showReject ? (
           <button
@@ -66,7 +68,7 @@ export function ReviewActions({ submissionId }: { submissionId: string }) {
             disabled={loading !== null}
             className="btn-danger"
           >
-            {loading === "reject" ? "..." : "Confirmar rechazo"}
+            {loading === "reject" ? "..." : d.admin.confirmReject}
           </button>
         ) : (
           <button
@@ -74,7 +76,7 @@ export function ReviewActions({ submissionId }: { submissionId: string }) {
             disabled={loading !== null}
             className="btn-secondary"
           >
-            Rechazar
+            {d.admin.reject}
           </button>
         )}
       </div>

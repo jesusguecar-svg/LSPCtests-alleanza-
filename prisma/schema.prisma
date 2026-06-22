@@ -54,6 +54,10 @@ model Step {
   title          String
   description    String
   instructions   String
+  // Traducciones al inglés (opcionales; si faltan se usa el español).
+  titleEn        String?
+  descriptionEn  String?
+  instructionsEn String?
   requiresUpload Boolean @default(false)
   externalUrl    String?
   managerOnly    Boolean @default(false) // pasos que solo el manager puede completar (p. ej. activación)

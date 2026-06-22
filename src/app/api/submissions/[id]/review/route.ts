@@ -57,12 +57,15 @@ export async function POST(
     },
   });
 
+  const dashboardUrl = `${process.env.APP_URL || ""}/dashboard`;
   if (action === "approve") {
     await notify({
       userId: submission.userId,
       type: "APPROVED",
       title: `Paso aprobado: ${submission.step.title}`,
       body: "¡Buen trabajo! Ya puedes continuar con el siguiente paso.",
+      ctaLabel: "Ver mi progreso",
+      ctaUrl: dashboardUrl,
     });
   } else {
     await notify({
@@ -70,6 +73,8 @@ export async function POST(
       type: "REJECTED",
       title: `Paso rechazado: ${submission.step.title}`,
       body: feedback,
+      ctaLabel: "Corregir y reenviar",
+      ctaUrl: dashboardUrl,
     });
   }
 

@@ -2,19 +2,13 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { STATUS_META, waitingTime, formatDate } from "@/lib/format";
+import { getLocale } from "@/lib/i18n-server";
+import { getDict, localizeStep } from "@/lib/i18n";
+import { statusMeta, waitingTime, formatDate } from "@/lib/format";
 import type { SubmissionStatus } from "@/lib/constants";
 import { ReviewActions } from "../review-actions";
 
 export const dynamic = "force-dynamic";
-
-const EVENT_LABEL: Record<string, string> = {
-  SUBMITTED: "Enviado por el técnico",
-  APPROVED: "Aprobado",
-  REJECTED: "Rechazado",
-  RESET: "Reabierto",
-  NOTE: "Nota",
-};
 
 export default async function TechnicianDetailPage({
   params,
@@ -24,6 +18,9 @@ export default async function TechnicianDetailPage({
   const session = await getSession();
   if (!session) redirect("/login");
   if (session.role !== "MANAGER") redirect("/dashboard");
+
+  const locale = getLocale();
+  const d = getDict(locale);
 
   const tech = await prisma.user.findUnique({
     where: { id: params.id },
@@ -44,7 +41,7 @@ export default async function TechnicianDetailPage({
     <main className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-4">
         <Link href="/admin" className="text-sm text-brand-600 hover:underline">
-          ← Volver al panel
+          {d.detail.back}
         </Link>
       </div>
 
@@ -52,17 +49,18 @@ export default async function TechnicianDetailPage({
         <h1 className="text-xl font-bold">{tech.name}</h1>
         <p className="text-sm text-slate-500">
           {tech.email}
-          {tech.phone ? ` · ${tech.phone}` : ""} · alta{" "}
-          {formatDate(tech.createdAt)}
+          {tech.phone ? ` · ${tech.phone}` : ""} ·{" "}
+          {d.admin.enrolled(formatDate(tech.createdAt, locale))}
         </p>
         <p className="mt-2 text-sm font-medium">
-          {approved} de {subs.length} pasos aprobados
+          {d.detail.approvedOf(approved, subs.length)}
         </p>
       </header>
 
       <div className="space-y-4">
         {subs.map((sub, i) => {
-          const meta = STATUS_META[sub.status as SubmissionStatus];
+          const meta = statusMeta(sub.status as SubmissionStatus, locale);
+          const content = localizeStep(sub.step, locale);
           const prev = subs[i - 1];
           const unlocked = i === 0 || prev?.status === "APPROVED";
           const actionable =
@@ -74,11 +72,9 @@ export default async function TechnicianDetailPage({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h2 className="font-semibold">
-                    Paso {sub.step.order}: {sub.step.title}
+                    {d.admin.stepN(sub.step.order)} {content.title}
                   </h2>
-                  <p className="text-sm text-slate-500">
-                    {sub.step.description}
-                  </p>
+                  <p className="text-sm text-slate-500">{content.description}</p>
                 </div>
                 <span
                   className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium ${meta.className}`}
@@ -90,27 +86,28 @@ export default async function TechnicianDetailPage({
               <dl className="mt-3 space-y-1 text-sm">
                 {sub.submittedAt && (
                   <div className="flex gap-2">
-                    <dt className="text-slate-500">Enviado:</dt>
+                    <dt className="text-slate-500">{d.detail.submitted}</dt>
                     <dd>
-                      {formatDate(sub.submittedAt)} ({waitingTime(sub.submittedAt)})
+                      {formatDate(sub.submittedAt, locale)} (
+                      {waitingTime(sub.submittedAt, locale)})
                     </dd>
                   </div>
                 )}
                 {sub.reviewedAt && (
                   <div className="flex gap-2">
-                    <dt className="text-slate-500">Revisado:</dt>
-                    <dd>{formatDate(sub.reviewedAt)}</dd>
+                    <dt className="text-slate-500">{d.detail.reviewed}</dt>
+                    <dd>{formatDate(sub.reviewedAt, locale)}</dd>
                   </div>
                 )}
                 {sub.note && (
                   <div className="flex gap-2">
-                    <dt className="text-slate-500">Nota del técnico:</dt>
+                    <dt className="text-slate-500">{d.detail.techNote}</dt>
                     <dd>“{sub.note}”</dd>
                   </div>
                 )}
                 {sub.feedback && (
                   <div className="flex gap-2 text-red-700">
-                    <dt>Feedback del manager:</dt>
+                    <dt>{d.detail.managerFeedback}</dt>
                     <dd>{sub.feedback}</dd>
                   </div>
                 )}
@@ -123,7 +120,8 @@ export default async function TechnicianDetailPage({
                   rel="noopener noreferrer"
                   className="btn-secondary mt-3"
                 >
-                  Ver archivo{sub.fileName ? `: ${sub.fileName}` : ""} ↗
+                  {d.common.viewFile}
+                  {sub.fileName ? `: ${sub.fileName}` : ""} ↗
                 </a>
               )}
 
@@ -134,14 +132,14 @@ export default async function TechnicianDetailPage({
                     <li key={e.id} className="relative pb-3 last:pb-0">
                       <span className="absolute -left-[1.4rem] top-1 h-2.5 w-2.5 rounded-full bg-slate-300" />
                       <p className="text-sm font-medium">
-                        {EVENT_LABEL[e.action] ?? e.action}
+                        {d.events[e.action as keyof typeof d.events] ?? e.action}
                         {e.actorName ? ` — ${e.actorName}` : ""}
                       </p>
                       {e.message && (
                         <p className="text-sm text-slate-600">{e.message}</p>
                       )}
                       <p className="text-xs text-slate-400">
-                        {formatDate(e.createdAt)}
+                        {formatDate(e.createdAt, locale)}
                       </p>
                     </li>
                   ))}

@@ -15,6 +15,29 @@ aprueba/rechaza cada envío desde un único panel.
   a Cloudinary / S3
 - **Notificaciones in-app** (campana 🔔) con conteo de no leídas: el técnico es
   avisado al aprobar/rechazar un paso; el manager, cuando hay algo por revisar
+- **Notificaciones por correo** vía Resend (opcional; si no hay API key, la app
+  funciona igual solo con las notificaciones in-app)
+- **Bilingüe ES/EN** con toggle (la preferencia se guarda en una cookie). El
+  español es el idioma por defecto; el contenido de los pasos está traducido.
+
+## Idioma (ES/EN)
+
+El selector de idioma (ES | EN) está en la cabecera de cada pantalla y en las
+pantallas de login/registro. La elección se guarda en la cookie `lang` durante
+un año. Para añadir o ajustar textos, edita los diccionarios en
+`src/lib/i18n.ts`; el contenido de los pasos (títulos/instrucciones en inglés)
+está en `prisma/seed.ts` (`titleEn`, `descriptionEn`, `instructionsEn`).
+
+## Correo (Resend) — opcional
+
+1. Crea una cuenta gratis en https://resend.com y copia tu API key (`re_...`).
+2. En `.env`, pon `RESEND_API_KEY` y `EMAIL_FROM`. Para enviar desde tu dominio,
+   verifícalo en Resend; si no, usa el remitente de pruebas (`onboarding@resend.dev`).
+3. Define `APP_URL` (sin barra final) para que los botones de los correos
+   apunten a tu app.
+
+Sin `RESEND_API_KEY` no se envía ningún correo y nada falla: las notificaciones
+in-app siguen funcionando.
 
 ## Los 7 pasos del onboarding
 
@@ -94,7 +117,5 @@ almacenamiento cifrado, acuerdos BAA con los proveedores y controles adicionales
 
 ## Roadmap (Fase 2+)
 
-- Notificaciones por correo (Resend/SendGrid), además de las in-app actuales
-- Toggle bilingüe ES/EN
 - Acciones en lote para activar cuentas
 - Features para el director del programa, reportes y analítica
