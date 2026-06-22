@@ -39,6 +39,29 @@ está en `prisma/seed.ts` (`titleEn`, `descriptionEn`, `instructionsEn`).
 Sin `RESEND_API_KEY` no se envía ningún correo y nada falla: las notificaciones
 in-app siguen funcionando.
 
+## Almacenamiento de archivos (Cloudinary) — opcional, recomendado para producción
+
+**En desarrollo local**, la app usa almacenamiento en `./uploads` (carpeta privada, ignorada por Git).
+
+**En producción** (especialmente Vercel, cuyo filesystem es efímero), usa **Cloudinary**:
+
+1. Crea una cuenta gratis en https://cloudinary.com.
+2. Ve a tu [Dashboard](https://cloudinary.com/console/c/settings/integration) y copia:
+   - **Cloud Name** (en Settings > Integration)
+   - **API Key** (mismo lugar)
+3. Crea un **Upload Preset** (Settings > Upload > Add upload preset):
+   - Pon un nombre (ej: `onboarding`)
+   - Cambia **Signing Mode** a `Unsigned` (sin autenticación requerida)
+4. En `.env`, rellena:
+   ```env
+   CLOUDINARY_CLOUD_NAME="tu-cloud-name"
+   CLOUDINARY_API_KEY="tu-api-key"
+   CLOUDINARY_UPLOAD_PRESET="onboarding"
+   ```
+
+Sin estas variables, la app sigue usando `./uploads`. Los archivos se sirven desde `/api/files/[...path]` 
+(autenticado) y se redirigen a Cloudinary cuando está configurado.
+
 ## Los 7 pasos del onboarding
 
 1. Firma de contrato (copia impresa → subir foto/escaneo firmado)
@@ -132,16 +155,20 @@ externo y agrega el enlace en el README de esa carpeta (ver instrucciones ahí).
    `AUTH_SECRET`).
 
 > **Almacenamiento de archivos en producción:** el sistema de archivos de Vercel
-> es efímero. Antes de desplegar, migra `src/lib/uploads.ts` y la ruta
-> `src/app/api/files/[...path]` a Cloudinary o AWS S3 (guardando la URL/clave en
-> `Submission.fileUrl`).
+> es efímero. La app ya soporta Cloudinary (ver sección anterior). Configura
+> `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` y `CLOUDINARY_UPLOAD_PRESET` en las
+> variables de entorno de Vercel. Sin ellas, la app usará `./uploads` (no persiste).
 
 ## Privacidad / HIPAA
 
-Los documentos (ID, foto, HIPAA, contrato) se guardan en `uploads/` (fuera de
-`public/`) y solo se sirven a su dueño o a un manager autenticado vía
-`/api/files/...`. Esto es un punto de partida; un despliegue HIPAA real requiere
-almacenamiento cifrado, acuerdos BAA con los proveedores y controles adicionales.
+Los documentos (ID, foto, HIPAA, contrato) se guardan **privadamente**:
+- **Localmente** (desarrollo): en `uploads/` (fuera de `public/`, ignorada por Git).
+- **En la nube** (producción): en Cloudinary (en carpetas privadas por usuario).
+
+Todos los archivos se sirven a través de `/api/files/...`, un endpoint autenticado que 
+verifica que solo el dueño o un manager puedan acceder. Esto es un punto de partida; 
+un despliegue HIPAA real requiere almacenamiento cifrado, acuerdos BAA con los proveedores 
+y controles de acceso adicionales.
 
 ## Roadmap (Fase 3+)
 

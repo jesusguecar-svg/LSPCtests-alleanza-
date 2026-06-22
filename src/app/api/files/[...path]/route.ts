@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { readFile } from "fs/promises";
-import path from "path";
+import pathLib from "path";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -49,10 +49,16 @@ export async function GET(
     );
   }
 
+  // Si fileUrl es una URL absoluta (Cloudinary), redirige
+  if (submission.fileUrl?.startsWith("https://")) {
+    return NextResponse.redirect(submission.fileUrl);
+  }
+
+  // Si no, sirve del almacenamiento local
   try {
-    const filePath = path.join(process.cwd(), UPLOAD_DIR, relative);
+    const filePath = pathLib.join(process.cwd(), UPLOAD_DIR, relative);
     const data = await readFile(filePath);
-    const ext = path.extname(filePath).toLowerCase();
+    const ext = pathLib.extname(filePath).toLowerCase();
     return new NextResponse(new Uint8Array(data), {
       headers: {
         "Content-Type": CONTENT_TYPES[ext] ?? "application/octet-stream",
