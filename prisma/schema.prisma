@@ -1,0 +1,86 @@
+// Esquema de la base de datos — Panel de Onboarding de Técnicos
+// Desarrollo local: SQLite (provider = "sqlite").
+// Producción: cambia provider a "postgresql" y la DATABASE_URL en .env.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Nota: SQLite no soporta enums de Prisma, por eso usamos String.
+// Los valores válidos están tipados en src/lib/constants.ts:
+//   Role:             "TECHNICIAN" | "MANAGER"
+//   SubmissionStatus: "PENDING" | "IN_REVIEW" | "APPROVED" | "REJECTED"
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("TECHNICIAN")
+  phone        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  submissions   Submission[] @relation("UserSubmissions")
+  reviewedItems Submission[] @relation("ReviewedBy")
+}
+
+// Catálogo de los 7 pasos del onboarding (sembrado en seed.ts)
+model Step {
+  id             String  @id @default(cuid())
+  order          Int     @unique
+  key            String  @unique
+  title          String
+  description    String
+  instructions   String
+  requiresUpload Boolean @default(false)
+  externalUrl    String?
+  managerOnly    Boolean @default(false) // pasos que solo el manager puede completar (p. ej. activación)
+
+  submissions Submission[]
+}
+
+// Una fila por (técnico, paso). Guarda estado, archivo, notas y feedback.
+model Submission {
+  id          String  @id @default(cuid())
+  status      String  @default("PENDING")
+  fileUrl     String? // ruta interna del archivo subido
+  fileName    String? // nombre original del archivo
+  note        String? // nota opcional del técnico al enviar
+  feedback    String? // feedback del manager (motivo del rechazo, instrucciones)
+  submittedAt DateTime? // cuándo el técnico envió (inicia el "reloj de espera")
+  reviewedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  userId String
+  user   User   @relation("UserSubmissions", fields: [userId], references: [id], onDelete: Cascade)
+
+  stepId String
+  step   Step   @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  reviewedById String?
+  reviewedBy   User?   @relation("ReviewedBy", fields: [reviewedById], references: [id])
+
+  events SubmissionEvent[]
+
+  @@unique([userId, stepId])
+  @@index([status])
+}
+
+// Historial de auditoría: cada cambio de estado / acción queda registrado.
+model SubmissionEvent {
+  id        String   @id @default(cuid())
+  action    String // SUBMITTED | APPROVED | REJECTED | RESET | NOTE
+  message   String?
+  actorName String?
+  createdAt DateTime @default(now())
+
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
