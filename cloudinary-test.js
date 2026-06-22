@@ -3,8 +3,8 @@ const cloudinary = require('cloudinary').v2;
 // Configure Cloudinary with inline credentials
 cloudinary.config({
   cloud_name: 'djue5nsc1', // ← your cloud name
-  api_key: '499451192845892', // ← your API key
-  api_secret: 'aj7wibek4q8z-d9w5Hw96cvJlLk', // ← your API secret
+  api_key: '437367827837869', // ← your API key
+  api_secret: 'FVq6_fNRHHd7VNztvUav23lChv0', // ← your API secret
 });
 
 async function testCloudinaryIntegration() {
