@@ -91,6 +91,9 @@ export default async function AdminPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/admin/dashboard" className="btn-secondary text-sm">
+            Dashboard
+          </Link>
           <Link href="/admin/reports" className="btn-secondary text-sm">
             {d.admin.reports}
           </Link>
