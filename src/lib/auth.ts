@@ -9,9 +9,14 @@ const MAX_AGE = 60 * 60 * 24 * 7; // 7 días
 
 function getSecret() {
   const secret = process.env.AUTH_SECRET;
-  if (!secret || secret.length < 16) {
+  if (!secret) {
     throw new Error(
-      "AUTH_SECRET no está configurado o es demasiado corto. Define uno en .env"
+      "AUTH_SECRET no está configurado. Define uno en .env o variables de entorno."
+    );
+  }
+  if (secret.length < 16) {
+    console.warn(
+      `AUTH_SECRET es demasiado corto (${secret.length} caracteres). Se recomienda al menos 16 caracteres.`
     );
   }
   return new TextEncoder().encode(secret);
